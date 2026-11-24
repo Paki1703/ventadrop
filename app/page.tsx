@@ -1,101 +1,19 @@
 "use client";
-
-import { useState } from "react";
-import { ArrowUpRight, ChevronDown, CircleHelp, Menu, Package, ShieldCheck, Sparkles, Wallet } from "lucide-react";
-
-const cases = [
-  { name: "STARTER", price: 99, color: "blue", tag: "ДЛЯ НОВИЧКОВ", item: "★", subtitle: "Первый шаг" },
-  { name: "RED ALERT", price: 249, color: "red", tag: "ПОПУЛЯРНЫЙ", item: "✦", subtitle: "Красная коллекция" },
-  { name: "PHANTOM", price: 499, color: "violet", tag: "РЕДКИЕ СКИНЫ", item: "◈", subtitle: "Охота за редкостью" },
-  { name: "ELITE", price: 999, color: "gold", tag: "ПРЕМИУМ", item: "✧", subtitle: "Высокий риск" },
-];
-
-const drops = [
-  { name: "AK-47 | Slate", rarity: "ЗАПРЕЩЁННОЕ", tone: "purple", value: "320 ₽" },
-  { name: "AWP | Atheris", rarity: "ЗАСЕКРЕЧЕННОЕ", tone: "pink", value: "740 ₽" },
-  { name: "USP-S | Cortex", rarity: "ЗАСЕКРЕЧЕННОЕ", tone: "pink", value: "510 ₽" },
-  { name: "★ Нож | Doppler", rarity: "ТАЙНОЕ", tone: "gold", value: "8 900 ₽" },
-];
-
-export default function Home() {
-  const [balance, setBalance] = useState(1500);
-  const [selected, setSelected] = useState<number | null>(null);
-  const [opening, setOpening] = useState(false);
-  const [result, setResult] = useState<(typeof drops)[number] | null>(null);
-  const [notice, setNotice] = useState("");
-
-  function openCase(index: number) {
-    const chosen = cases[index];
-    if (balance < chosen.price || opening) {
-      setNotice("Недостаточно демонстрационных средств.");
-      return;
-    }
-    setBalance((value) => value - chosen.price);
-    setSelected(index);
-    setResult(null);
-    setOpening(true);
-    setNotice("");
-    window.setTimeout(() => {
-      setResult(drops[Math.floor(Math.random() * drops.length)]);
-      setOpening(false);
-    }, 1600);
-  }
-
-  return (
-    <main className="site-shell">
-      <div className="topline"><span><i className="live-dot" /> DEMO-СЕРВЕР РАБОТАЕТ</span><span>VENTADROP COMMUNITY <b>RU</b></span></div>
-      <header className="header wrap">
-        <a className="brand" href="#"><span className="brand-mark"><Package size={22} /></span><span>VENTA<span className="orange">DROP</span><small>CASE OPENING</small></span></a>
-        <nav><a className="active" href="#cases">КЕЙСЫ</a><a href="#how">КАК ЭТО РАБОТАЕТ</a><a href="#drops">ПРЕДМЕТЫ</a></nav>
-        <div className="header-actions"><div className="balance"><Wallet size={16}/><span>{balance.toLocaleString("ru-RU")} ₽</span></div><button className="profile-btn" onClick={() => setNotice("Профиль и авторизация появятся на следующем этапе.")}>МОЙ ПРОФИЛЬ <ArrowUpRight size={15}/></button><button className="mobile-menu" aria-label="Меню"><Menu/></button></div>
-      </header>
-
-      <section className="hero wrap">
-        <div className="hero-copy">
-          <div className="eyebrow"><Sparkles size={14}/> ОТКРЫВАЙ. СОБИРАЙ. ПОБЕЖДАЙ.</div>
-          <h1>ТВОЙ ДРОП.<br/><span>ТВОИ ПРАВИЛА.</span></h1>
-          <p>Открывай тематические кейсы, находи редкие предметы и собирай собственную коллекцию.</p>
-          <a className="primary-btn" href="#cases">ВЫБРАТЬ КЕЙС <ArrowUpRight size={17}/></a>
-          <div className="hero-note"><ShieldCheck size={15}/> ДЕМО-РЕЖИМ · БЕЗ РЕАЛЬНЫХ ПЛАТЕЖЕЙ</div>
-        </div>
-        <div className="hero-art" aria-label="Декоративная иллюстрация кейса">
-          <div className="orbit orbit-one"/><div className="orbit orbit-two"/>
-          <div className="hero-glow"/>
-          <div className="hero-case"><div className="case-top">VD / 01</div><div className="case-emblem">V</div><div className="case-label">VENTA<br/>DROP</div><div className="case-bottom">SPECIAL DROP SERIES</div></div>
-          <div className="float-chip chip-one">★ RARE DROP</div><div className="float-chip chip-two">CASE #001</div>
-        </div>
-      </section>
-
-      <section className="stats wrap">
-        <div><strong>4</strong><span>ДЕМО-КЕЙСА</span></div><div><strong>∞</strong><span>ВОЗМОЖНОСТЕЙ</span></div><div><strong>24/7</strong><span>ОТКРЫТИЯ В ДЕМО</span></div><div className="stats-caption">ТВОЯ КОЛЛЕКЦИЯ<br/><b>НАЧИНАЕТСЯ ЗДЕСЬ</b></div>
-      </section>
-
-      <section className="section wrap" id="cases">
-        <div className="section-heading"><div><div className="eyebrow">ПОДБЕРИ СВОЙ ДРОП</div><h2>ВЫБЕРИ <span>КЕЙС</span></h2></div><a href="#how" className="text-link">КАК ЭТО РАБОТАЕТ <ArrowUpRight size={15}/></a></div>
-        <div className="case-grid">
-          {cases.map((item, index) => <article className={`case-card ${item.color}`} key={item.name}>
-            <div className="case-card-top"><span>{item.tag}</span><span>VD / 0{index + 1}</span></div>
-            <div className="case-visual"><div className="case-ring"/><div className="case-cube"><span>{item.item}</span></div></div>
-            <div className="case-info"><div><h3>{item.name}</h3><p>{item.subtitle}</p></div><div className="case-price">{item.price} <small>₽</small></div></div>
-            <button className="open-btn" onClick={() => openCase(index)} disabled={opening}>ОТКРЫТЬ КЕЙС <ArrowUpRight size={16}/></button>
-          </article>)}
-        </div>
-        {notice && <p className="notice">{notice}</p>}
-      </section>
-
-      {(opening || result) && <section className="opening-panel wrap">
-        <div className="section-heading"><div><div className="eyebrow">МОМЕНТ ИСТИНЫ</div><h2>{opening ? "ОТКРЫВАЕМ..." : "ТВОЙ ДРОП"}</h2></div><span className="demo-label">DEMO</span></div>
-        <div className={`roulette ${opening ? "spinning" : ""}`}><div className="roulette-pointer"/>{opening ? <div className="roulette-placeholder">✦</div> : result && <div className={`drop-result ${result.tone}`}><span>✦</span><b>{result.name}</b><small>{result.rarity} · {result.value}</small></div>}</div>
-        {result && <p className="result-caption">Предмет выпал в демонстрационном режиме. Реальные предметы не выдаются.</p>}
-      </section>}
-
-      <section className="section wrap" id="drops">
-        <div className="section-heading"><div><div className="eyebrow">ЧТО МОЖНО НАЙТИ</div><h2>ПРИМЕРЫ <span>ДРОПОВ</span></h2></div></div>
-        <div className="drop-grid">{drops.map((drop) => <div className={`drop-card ${drop.tone}`} key={drop.name}><div className="drop-icon">✦</div><div><b>{drop.name}</b><small>{drop.rarity}</small></div><strong>{drop.value}</strong></div>)}</div>
-      </section>
-
-      <section className="how wrap" id="how"><div className="how-icon"><CircleHelp size={24}/></div><div><div className="eyebrow">ПРОСТО И ПОНЯТНО</div><h2>КАК ЭТО <span>РАБОТАЕТ</span></h2><p>Выбери кейс → запусти открытие → получи случайный демонстрационный предмет. Вероятности, экономика и серверная логика будут настроены отдельно до запуска реальной версии.</p></div></section>
-      <footer className="footer wrap"><a className="brand" href="#"><span className="brand-mark"><Package size={18}/></span><span>VENTA<span className="orange">DROP</span><small>CASE OPENING</small></span></a><span>© 2026 VENTADROP · ПРОТОТИП</span><span>ДЕМО-БАЛАНС НЕ ИМЕЕТ ДЕНЕЖНОЙ ЦЕННОСТИ</span></footer>
-    </main>
-  );
-}
+import {useEffect,useMemo,useState} from "react";import Link from "next/link";import {ArrowUpRight,Flame,Gem,Menu,Package,Search,ShieldCheck,Sparkles,Wallet,X} from "lucide-react";
+type Item={name:string;price:number;median:number|null;quantity:number;url:string|null};
+const cases=[{name:"PULSE",price:149,sub:"Вход в игру",color:"cyan",glyph:"◈",items:["AK-47 | Slate","USP-S | Cortex","MP9 | Food Chain"]},{name:"INFERNO",price:349,sub:"Жаркая коллекция",color:"orange",glyph:"✦",items:["AWP | Atheris","M4A1-S | Decimator","AK-47 | Neon Rider"]},{name:"PHANTOM",price:699,sub:"Редкие находки",color:"violet",glyph:"◇",items:["AWP | Asiimov","★ Falchion Knife | Doppler","★ Specialist Gloves | Fade"]},{name:"ROYAL",price:1499,sub:"Коллекция легенд",color:"gold",glyph:"♛",items:["★ Karambit | Doppler","★ Butterfly Knife | Slaughter","AWP | Dragon Lore"]}];
+const sample:Item[]=[{name:"AK-47 | Slate (Field-Tested)",price:420,median:455,quantity:120,url:null},{name:"AWP | Atheris (Field-Tested)",price:285,median:310,quantity:84,url:null},{name:"USP-S | Cortex (Minimal Wear)",price:690,median:720,quantity:32,url:null},{name:"M4A1-S | Decimator (Field-Tested)",price:980,median:1040,quantity:18,url:null},{name:"★ Falchion Knife | Doppler (Minimal Wear)",price:12400,median:13100,quantity:4,url:null}];
+const rub=(n:number)=>new Intl.NumberFormat("ru-RU",{maximumFractionDigits:0}).format(n)+" ₽";
+export default function Home(){const[bal,setBal]=useState(2500),[market,setMarket]=useState(sample),[source,setSource]=useState("ДЕМО-КОТИРОВКИ"),[query,setQuery]=useState(""),[opened,setOpened]=useState(""),[rolling,setRolling]=useState(false),[drop,setDrop]=useState(""),[toast,setToast]=useState(""),[menu,setMenu]=useState(false);
+useEffect(()=>{try{const x=localStorage.getItem("vd_demo_balance");if(x)setBal(Math.max(0,Number(x)||0));}catch{}fetch("/api/market").then(r=>r.json()).then(d=>{if(d.items?.length){setMarket(d.items);setSource("SKINPORT · RUB");}}).catch(()=>{});},[]);
+useEffect(()=>{try{localStorage.setItem("vd_demo_balance",String(bal));}catch{}},[bal]);
+const shown=useMemo(()=>market.filter(x=>x.name.toLowerCase().includes(query.toLowerCase())).slice(0,8),[market,query]);
+function open(c:typeof cases[number]){if(rolling)return;if(bal<c.price){setToast("Недостаточно демо-кредитов.");return;}setBal(v=>v-c.price);setOpened(c.name);setDrop("");setRolling(true);setToast("");setTimeout(()=>{setDrop(c.items[Math.floor(Math.random()*c.items.length)]);setRolling(false);},2100);}
+return <main><div className="ticker"><span><i/> LIVE CASE LAB · ДЕМО-СРЕДА</span><span>VENTADROP / RUB / BUILD 02</span></div><header className="nav wrap"><Link href="/" className="logo"><b><Package/></b><span>VENTA<span>DROP</span><small>CASE LAB / CS2</small></span></Link><nav className={menu?"show":""}><a href="#cases" onClick={()=>setMenu(false)}>КЕЙСЫ</a><a href="#market" onClick={()=>setMenu(false)}>РЫНОК СКИНОВ</a><a href="#how" onClick={()=>setMenu(false)}>КАК РАБОТАЕТ</a></nav><div className="right"><div className="balance"><Wallet size={15}/>{rub(bal)} <small>DEMO</small></div><Link href="/admin" className="adminlink">ADMIN ↗</Link><button className="hamb" onClick={()=>setMenu(!menu)}>{menu?<X/>:<Menu/>}</button></div></header>
+<section className="hero wrap"><div><label className="kicker"><i/> CASE OPENING PLATFORM / 02</label><h1>ОТКРОЙ<br/><em>СВОЙ ДРОП</em><b>.</b></h1><p>Твоя охота за редкими скинами начинается здесь. Выбирай кейс, лови момент и собирай коллекцию.</p><a className="cta" href="#cases">ВЫБРАТЬ КЕЙС <ArrowUpRight size={17}/></a><div className="hero-stats"><div><b>04</b><small>АВТОРСКИХ КЕЙСА</small></div><div><b>CS2</b><small>SKIN UNIVERSE</small></div><div><b>RUB</b><small>ВАЛЮТА ВИТРИНЫ</small></div></div></div><div className="stage"><div className="glow"/><div className="ring r1"/><div className="ring r2"/><div className="crate"><small>VD / DROP SERIES 001</small><b>V</b><strong>VENTA<br/>DROP</strong><i>SEALED ITEM CONTAINER</i></div><span className="tag tag1"><Sparkles size={13}/> RARE DROP</span><span className="tag tag2">CASE Nº 001 / 004</span></div></section>
+<div className="trust wrap"><span><Flame/> ДИНАМИЧНАЯ РУЛЕТКА</span><span><Gem/> КОЛЛЕКЦИЯ СКИНОВ</span><span><ShieldCheck/> ДЕМО-РЕЖИМ</span><small>NO REAL MONEY / NO ITEM DELIVERY</small></div>
+<section className="section wrap" id="cases"><div className="heading"><div><label className="kicker">CHOOSE YOUR DROP</label><h2>КЕЙСЫ <em>VENTA</em></h2></div><small>04 COLLECTIONS ↗</small></div><div className="cases">{cases.map((c,i)=><article className={"case "+c.color} key={c.name}><div className="meta"><span>0{i+1} / VD</span><span>{c.name==="ROYAL"?"PREMIUM":"CASE SERIES"}</span></div><div className="art"><div className="halo"/><b>{c.glyph}</b><i>VD</i><span>✧</span></div><div className="caseinfo"><div><h3>{c.name}</h3><p>{c.sub}</p></div><strong>{rub(c.price)}</strong></div><button onClick={()=>open(c)}>ОТКРЫТЬ КЕЙС <ArrowUpRight size={15}/></button></article>)}</div>{toast&&<div className="toast">{toast}<button onClick={()=>setToast("")}>×</button></div>}</section>
+{opened&&<section className="section wrap"><div className="heading"><div><label className="kicker">THE DROP MOMENT</label><h2>{rolling?"РУЛЕТКА":"ТВОЙ"} <em>{rolling?"ЗАПУЩЕНА":"РЕЗУЛЬТАТ"}</em></h2></div><small>DEMO ONLY</small></div><div className={"reel "+(rolling?"spinning":"")}>{rolling?<div>✦　✧　✦　◇　✦　✧　✦</div>:<><b>✦</b><strong>{drop}</strong><small>ДЕМОНСТРАЦИОННЫЙ ПРЕДМЕТ · НЕ ВЫДАЁТСЯ</small></>}</div></section>}
+<section className="section wrap" id="market"><div className="heading"><div><label className="kicker">MARKET INTELLIGENCE</label><h2>РЫНОК <em>СКИНОВ</em></h2><p>Ориентиры по листингам Skinport в RUB. Цена зависит от float, состояния, наклеек и ликвидности.</p></div><small className="source"><i/> {source}</small></div><div className="search"><Search size={16}/><input value={query} onChange={e=>setQuery(e.target.value)} placeholder="Поиск скина…"/></div><div className="markethead"><span>ПРЕДМЕТ</span><span>МИН. ЦЕНА</span><span>МЕДИАНА</span><span>ЛИСТИНГИ</span></div>{shown.map((x,i)=><div className="marketrow" key={x.name}><b><i>{["◇","✦","◈","✧"][i%4]}</i>{x.name}</b><strong>{rub(x.price)}</strong><span>{x.median?rub(x.median):"—"}</span><span>{x.quantity}</span></div>)}{!shown.length&&<p className="empty">Ничего не найдено.</p>}<p className="disclaimer">Источник: <a href="https://skinport.com/" target="_blank" rel="noreferrer">Skinport</a>. Справочные данные, кэш до 5 минут; не гарантируют цену будущей продажи. Если API недоступно, показаны демонстрационные значения.</p></section>
+<section className="how wrap" id="how"><div><label className="kicker">BUILT FOR THE DROP</label><h2>МОМЕНТ.<br/><em>КОТОРЫЙ ЖДЁШЬ.</em></h2></div><div><p><b>01 / ВЫБЕРИ КЕЙС</b><small>Сравни коллекции и стоимость открытия.</small></p><p><b>02 / ЗАПУСТИ РУЛЕТКУ</b><small>Посмотри анимацию и демо-результат.</small></p><p><b>03 / ИЗУЧАЙ РЫНОК</b><small>Сверяй ориентиры цен со сторонней площадкой.</small></p></div></section>
+<footer className="footer wrap"><b>VENTA<span>DROP</span></b><small>© 2026 VENTADROP · DEMO PROTOTYPE</small><small>ВИРТУАЛЬНЫЕ КРЕДИТЫ НЕ ИМЕЮТ ДЕНЕЖНОЙ ЦЕННОСТИ</small></footer></main>}
